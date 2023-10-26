@@ -24,7 +24,7 @@ window = p.display.set_mode((640, 800))
 board = [[0 for _ in range(10)]for _ in range(20)]
 clock = p.time.Clock()
 spots = [[r(0, 400), r(0, 800)] for _ in range(50)]
-moon = p.image.load('/users/shmuli/automate/tetris/moon.png')
+moon = p.image.load('moon.png')
 
 class piece:
     size = 40
@@ -129,12 +129,10 @@ class Game:
             while True:
                 try: 
                     self.cur_piece.down = self.cur_piece.move_down()
-                    s(.01)
                     self.draw()
                     p.display.update()
                 except: 
                     piece.can_switch = self.next_up(pressed)
-                    s(.4)
                     break
 
         if keys[p.K_h] and piece.can_switch:
@@ -241,6 +239,7 @@ class Game:
             for event in p.event.get():
                 if event.type == p.QUIT:
                     p.quit()
+                    return
 
             self.update()
 
