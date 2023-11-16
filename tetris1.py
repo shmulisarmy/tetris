@@ -20,14 +20,13 @@ colors = [
     (0, 255, 0),      # Green (S-Piece)
     (255, 0, 0)       # Red (Z-Piece)
 ] 
-window = p.display.set_mode((640, 800))
 board = [[0 for _ in range(10)]for _ in range(20)]
 clock = p.time.Clock()
 spots = [[r(0, 400), r(0, 800)] for _ in range(50)]
 moon = p.image.load('moon.png')
 
 class piece:
-    size = 40
+    size = 20
     can_switch = True
     def __init__(self):
         self.right = r(0, 8)
@@ -63,7 +62,12 @@ class piece:
         for i in self.shape:
             right = i[0] + pre_right
             down = i[1] + pre_down
-            p.draw.rect(window, color, p.Rect(right*ps, down*ps, ps, ps))
+            p.draw.rect(Game.window, color, p.Rect(right*ps + 1, down*ps + 1, ps - 2, ps - 2))
+
+        top_left = (right*ps, down*ps)
+        top_right = ((right + 1)*ps, down*ps)
+        bottom_left = ((right)*ps, (down + 1)*ps)
+        bottom_right = ((right + 1)*ps, (down + 1)*ps)
 
     def draw_next(self):
         ps = piece.size
@@ -71,7 +75,7 @@ class piece:
         for i in self.shape:
             right = i[0] + 12
             down = i[1] + 4
-            p.draw.rect(window, (color), p.Rect(right*ps, down*ps, ps-1, ps-1))
+            p.draw.rect(Game.window, (color), p.Rect(right*ps, down*ps, ps-1, ps-1))
 
     def draw_hold(self):
         ps = piece.size
@@ -79,11 +83,13 @@ class piece:
         for i in self.shape:
             right = i[0] + 12
             down = i[1] + 12
-            p.draw.rect(window, (color), p.Rect(right*ps, down*ps, ps-1, ps-1))
+            p.draw.rect(Game.window, (color), p.Rect(right*ps, down*ps, ps-1, ps-1))
+
 
 
 class Game:
-    def __init__(self) -> None:
+    window = p.display.set_mode((piece.size*16, piece.size*20))
+    def __init__(self):
         p.init()
         self.cur_piece = piece()
         self.next_piece = piece()
@@ -103,11 +109,17 @@ class Game:
         for i, row in enumerate(board):
             for j, col in enumerate(row):
                 if col > 0:
-                    p.draw.rect(window, colors[col-1], p.Rect(j*ps, i*ps, ps, ps))
+                    p.draw.rect(Game.window, colors[col-1], p.Rect(j*ps + 1, i*ps + 1, ps - 2, ps - 2))
 
     def controls(self):
         pressed = False
         keys = p.key.get_pressed()
+        if keys[p.K_z]:
+            piece.size += 1
+            Game.window = p.display.set_mode((piece.size*16, piece.size*20))
+        if keys[p.K_o]:
+            piece.size -= 1
+            Game.window = p.display.set_mode((piece.size*16, piece.size*20))
         if keys[p.K_RIGHT]:
             try: self.cur_piece.right = self.cur_piece.move_right(1)
             except: pass
@@ -159,8 +171,8 @@ class Game:
                 board[0] = [0 for _ in row]
 
     @staticmethod
-    def draw_polygon(color, r, d, eye_level, ps = piece.size):
-
+    def draw_polygon(color, r, d, eye_level):
+        ps = piece.size
         #right includes left, and down includes up using negitive numbers
         r_a = (eye_level[0] - r)*2
         d_a = (eye_level[1] - d)*2
@@ -175,23 +187,28 @@ class Game:
         bottom_left_corner = (bottom_left[0] + r_a, bottom_left[1] + d_a)
         bottom_right_corner = (bottom_right[0] + r_a, bottom_right[1] + d_a)
 
-        p.draw.polygon(window, color, (top_left, top_left_corner, top_right_corner, top_right))
-        p.draw.polygon(window, color, (top_left, top_left_corner, bottom_left_corner, bottom_left))
-        p.draw.polygon(window, color, (top_right, top_right_corner, bottom_right_corner, bottom_right))
-        p.draw.polygon(window, color, (bottom_left, bottom_left_corner, bottom_right_corner, bottom_right))
+        p.draw.polygon(Game.window, color, (top_left, top_left_corner, top_right_corner, top_right))
+        p.draw.polygon(Game.window, color, (top_left, top_left_corner, bottom_left_corner, bottom_left))
+        p.draw.polygon(Game.window, color, (top_right, top_right_corner, bottom_right_corner, bottom_right))
+        p.draw.polygon(Game.window, color, (bottom_left, bottom_left_corner, bottom_right_corner, bottom_right))
 
-        p.draw.line(window, (0,0,0), top_right, top_right_corner, 1)
-        p.draw.line(window, (0,0,0), top_left, top_left_corner, 1)
-        p.draw.line(window, (0,0,0), top_right, top_right_corner, 1)
-        p.draw.line(window, (0,0,0), bottom_left, bottom_left_corner, 1)
+        p.draw.line(Game.window, (0,0,0), top_right, top_right_corner, 1)
+        p.draw.line(Game.window, (0,0,0), top_left, top_left_corner, 1)
+        p.draw.line(Game.window, (0,0,0), top_right, top_right_corner, 1)
+        p.draw.line(Game.window, (0,0,0), bottom_left, bottom_left_corner, 1)
+
+        p.draw.line(Game.window, (1,0,0), top_right, top_left, 1)
+        p.draw.line(Game.window, (1,0,0), top_right, bottom_right, 1)
+        p.draw.line(Game.window, (1,0,0), top_left, bottom_left, 1)
+        p.draw.line(Game.window, (1,0,0), bottom_right, bottom_left, 1)
 
 
     def draw(self, time = [0]):
         time[0] += 1
-        window.fill('black')
+        Game.window.fill('black')
         for i in spots:
-            p.draw.circle(window, (255, 255, 255), (i[0] + self.eye_level[0]/2, i[1] + self.eye_level[1]/2), 1)
-        window.blit(moon, (250 + self.eye_level[0], 50 + self.eye_level[1]))
+            p.draw.circle(Game.window, (255, 255, 255), (i[0] + self.eye_level[0]/2, i[1] + self.eye_level[1]/2), 1)
+        Game.window.blit(moon, (250 + self.eye_level[0], 50 + self.eye_level[1]))
         cp = self.cur_piece
         for i in cp.shape:
             c =  colors[cp.color-1]
@@ -215,10 +232,10 @@ class Game:
             for i in self.hold.shape:
                 self.draw_polygon((c[0]/2, c[1]/2, c[2]/2), 12 + i[0], 12 + i[1], self.eye_level)
             self.hold.draw(12, 12)
-        for i in range(11):
-            p.draw.line(window, (i*20,40-i,100), (i*piece.size, 0), (i*piece.size, 800), 1)
-        for i in range(21):
-            p.draw.line(window, (i*10,40-i,100), (0, i*piece.size), (400, i*piece.size), 1)
+        # for i in range(11):
+        #     p.draw.line(Game.window, (i*20,40-i,100), (i*piece.size, 0), (i*piece.size, 800), 1)
+        # for i in range(21):
+        #     p.draw.line(Game.window, (i*10,40-i,100), (0, i*piece.size), (400, i*piece.size), 1)
 
         p.display.update()
 
