@@ -1,5 +1,5 @@
 from random import randint as r, choice as c
-import pygame as p 
+import pygame as p, time as t
 
 shapes = [
     [[0, 0], [0, 1], [0, 2], [0, -1]],  # I-Piece
@@ -89,14 +89,14 @@ class piece:
 
 
 class Game:
-    window = p.display.set_mode((piece.size*16, piece.size*20))
     p.init()
-    p.mixer.init()
+    window = p.display.set_mode((piece.size*16, piece.size*20))
     def __init__(self):
         self.cur_piece = piece()
         self.next_piece = piece()
         self.hold = None
         self.eye_level = [5, 8]
+        self.paused = False
 
     def next_up(self, pressed):
         if not pressed:
@@ -243,8 +243,12 @@ class Game:
 
     def update(self, time = [0]): 
         time[0] += 1
-        pressed = self.controls()
-        if time[0]%5 == 0:
+        if p.key.get_pressed()[p.K_p]:
+            self.paused = not self.paused
+            t.sleep(.1)
+        if not self.paused:
+            pressed = self.controls()
+        if time[0]%5 == 0 and not self.paused:
             try: self.cur_piece.down = self.cur_piece.move_down()
             except: 
                 piece.can_switch = self.next_up(pressed)
