@@ -24,9 +24,10 @@ board = [[0 for _ in range(10)]for _ in range(20)]
 clock = p.time.Clock()
 spots = [[r(0, 400), r(0, 800)] for _ in range(50)]
 moon = p.image.load('moon.png')
+p.mixer.init()
 
 class piece:
-    size = 20
+    size = 30
     can_switch = True
     def __init__(self):
         self.right = r(0, 8)
@@ -89,8 +90,9 @@ class piece:
 
 class Game:
     window = p.display.set_mode((piece.size*16, piece.size*20))
+    p.init()
+    p.mixer.init()
     def __init__(self):
-        p.init()
         self.cur_piece = piece()
         self.next_piece = piece()
         self.hold = None
