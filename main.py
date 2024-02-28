@@ -2,23 +2,23 @@ from random import randint as r, choice as c
 import pygame as p, time as t
 
 shapes = [
-    [[0, 0], [0, 1], [0, 2], [0, -1]],  # I-Piece
-    [[0, 0], [0, 1], [1, 0], [1, 1]],  # O-Piece
-    [[0, 1], [1, 0], [1, 1], [1, 2]],  # T-Piece
-    [[0, -1], [1, -1], [1, 0], [1, 1]],  # L-Piece
-    [[0, 1], [1, -1], [1, 0], [1, 1]],  # J-Piece
-    [[0, 1], [0, 2], [1, 0], [1, 1]],  # S-Piece
-    [[0, 0], [0, 1], [1, 1], [1, 2]]   # Z-Piece
+    [[0, 0], [0, 1], [0, 2], [0, -1]],  
+    [[0, 0], [0, 1], [1, 0], [1, 1]],  
+    [[0, 1], [1, 0], [1, 1], [1, 2]],  
+    [[0, -1], [1, -1], [1, 0], [1, 1]],  
+    [[0, 1], [1, -1], [1, 0], [1, 1]],  
+    [[0, 1], [0, 2], [1, 0], [1, 1]],  
+    [[0, 0], [0, 1], [1, 1], [1, 2]]   
 ]
 
 colors = [
-    (0, 255, 255),    # Cyan (I-Piece)
-    (255, 255, 0),    # Yellow (O-Piece)
-    (128, 0, 128),    # Purple (T-Piece)
-    (255, 165, 0),    # Orange (L-Piece)
-    (0, 0, 255),      # Blue (J-Piece)
-    (0, 255, 0),      # Green (S-Piece)
-    (255, 0, 0)       # Red (Z-Piece)
+    (0, 255, 255),    
+    (255, 255, 0),    
+    (128, 0, 128),    
+    (255, 165, 0),    
+    (0, 0, 255),      
+    (0, 255, 0),      
+    (255, 0, 0)       
 ] 
 board = [[0 for _ in range(10)]for _ in range(20)]
 clock = p.time.Clock()
@@ -173,7 +173,10 @@ class Game:
                 board[0] = [0 for _ in row]
 
     @staticmethod
-    def draw_polygon(color, r, d, eye_level):
+    def draw_polygon(color, r: int, d: int, eye_level) -> None:
+        """takes in in a right and down co-ordinates and 
+        draws the 3d shape that surounds the  tetris block"""
+
         ps = piece.size
         #right includes left, and down includes up using negitive numbers
         r_a = (eye_level[0] - r)*2
@@ -208,8 +211,8 @@ class Game:
     def draw(self, time = [0]):
         time[0] += 1
         Game.window.fill('black')
-        for i in spots:
-            p.draw.circle(Game.window, (255, 255, 255), (i[0] + self.eye_level[0]/2, i[1] + self.eye_level[1]/2), 1)
+        for spot in spots:
+            p.draw.circle(Game.window, (255, 255, 255), (spot[0] + self.eye_level[0]/2, spot[1] + self.eye_level[1]/2), 1)
         Game.window.blit(moon, (250 + self.eye_level[0], 50 + self.eye_level[1]))
         cp = self.cur_piece
         for i in cp.shape:
@@ -234,10 +237,6 @@ class Game:
             for i in self.hold.shape:
                 self.draw_polygon((c[0]/2, c[1]/2, c[2]/2), 12 + i[0], 12 + i[1], self.eye_level)
             self.hold.draw(12, 12)
-        # for i in range(11):
-        #     p.draw.line(Game.window, (i*20,40-i,100), (i*piece.size, 0), (i*piece.size, 800), 1)
-        # for i in range(21):
-        #     p.draw.line(Game.window, (i*10,40-i,100), (0, i*piece.size), (400, i*piece.size), 1)
 
         p.display.update()
 
