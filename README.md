@@ -1,4 +1,5 @@
 |command|action|
+|---|---|
 |right arrow|move piece right|
 |left arrow|move piece left|
 |down arrow|move piece down|
