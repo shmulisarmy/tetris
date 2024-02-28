@@ -1,6 +1,3 @@
-<font color="blue">made using using <b>pygame</b>.</font>
-
-
 |command|action|
 |---|---|
 |right arrow|move piece right|
