@@ -1,3 +1,6 @@
+<span style="color:blue;">made using using <b>pygame</b>.</span>
+
+
 |command|action|
 |---|---|
 |right arrow|move piece right|
