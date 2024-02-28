@@ -1,4 +1,4 @@
-<span style="color:blue;">made using using <b>pygame</b>.</span>
+<font color="blue">made using using <b>pygame</b>.</font>
 
 
 |command|action|
